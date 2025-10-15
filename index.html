@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zaid — Internet of Things Portfolio</title>
+
+  <!-- Security & basic CSP: tighten on server for full effect -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:;">
+
+  <link rel="icon" href="https://alakbar-store.com/public/uploads/files/rmSndwxGWCV_zZh.png">
+
+  <style>
+    /* RESET */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+
+    /* ROOT COLORS for easy theming */
+    :root{
+      --bg-1:#05060a;
+      --bg-2:#071129;
+      --accent:#00E0A8; /* IoT green-ish */
+      --accent-2:#37B6FF;
+      --muted:#bfc7d3;
+      --glass: rgba(255,255,255,0.04);
+    }
+
+    body{
+      font-family: "Almarai", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(7,17,41,0.45), transparent),
+                  radial-gradient(900px 400px at 90% 90%, rgba(3,8,17,0.4), transparent),
+                  linear-gradient(135deg,var(--bg-1),var(--bg-2));
+      color:var(--muted);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+    }
+
+    /* Canvas container */
+    .card{
+      width:100%;
+      max-width:980px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:18px;
+      padding:28px;
+      box-shadow: 0 10px 40px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    /* Subtle circuit SVG background */
+    .card::before{
+      content:'';
+      position:absolute;inset:0;pointer-events:none;opacity:0.12;
+      background-image: radial-gradient(circle at 10% 10%, rgba(55,182,255,0.04), transparent 20%),
+        linear-gradient(90deg,transparent 30%, rgba(0,224,168,0.02));
+      mix-blend-mode:screen;
+    }
+
+    header{
+      display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+
+    .profile{display:flex;gap:18px;align-items:center}
+    .avatar{
+      width:90px;height:90px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);
+      box-shadow:0 6px 18px rgba(2,6,23,0.6);
+    }
+    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+
+    h1{font-size:1.35rem;color:#fff;letter-spacing:0.6px}
+    .meta{font-size:0.95rem;color:var(--muted)}
+
+    /* IoT visual mark: small animated node + line */
+    .io-mark{
+      display:flex;align-items:center;gap:10px;min-width:220px;justify-content:flex-end
+    }
+    .node{
+      width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:grid;place-items:center;color:#021019;font-weight:700;box-shadow:0 8px 30px rgba(3,20,30,0.6);
+      position:relative;overflow:visible
+    }
+    .node::after{
+      content:'';position:absolute;inset:auto -40px auto auto;width:140px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);
+      top:50%;transform:translateY(-50%);opacity:0.9;border-radius:1px
+    }
+    .node .dot{width:10px;height:10px;border-radius:50%;background:#021019;box-shadow:0 0 12px rgba(255,255,255,0.06),0 0 18px rgba(0,224,168,0.6)}
+
+    /* Links area */
+    .links-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px}
+    .link-card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;padding:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;
+      border:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:transform .28s, box-shadow .28s;
+    }
+    .link-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(3,20,30,0.6)}
+    .link-left{display:flex;gap:12px;align-items:center}
+    .icon-sq{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;background:rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.03)}
+    .link-title{font-weight:700;color:#fff}
+    .link-desc{font-size:0.82rem;color:var(--muted)}
+
+    /* single column on small screens */
+    @media (max-width:720px){
+      .links-grid{grid-template-columns:1fr}
+      .io-mark{justify-content:center;width:100%}
+    }
+
+    footer{margin-top:18px;text-align:center;font-size:0.82rem;color:rgba(255,255,255,0.55)}
+
+    /* small animated glows */
+    @keyframes pulse {0%{transform:scale(.98)}50%{transform:scale(1)}100%{transform:scale(.98)}}
+    .node{animation:pulse 3s ease-in-out infinite}
+
+    /* visually-hidden for accessibility */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+
+<body>
+  <main class="card" id="app">
+    <header>
+      <div class="profile">
+        <div class="avatar">
+          <img src="https://alakbar-store.com/public/uploads/files/ATG_0CliDILQoqB.jpeg" alt="صورة شخصية">
+        </div>
+        <div>
+          <h1 id="name">Zaid Khaza'leh</h1>
+          <div class="meta">تصميم وواجهات تُلمّح لخبرة في إنترنت الأشياء — بصرية وتجريبية</div>
+        </div>
+      </div>
+
+      <div class="io-mark" aria-hidden="true">
+        <div style="text-align:left;" class="meta">شبكة — حواف ذكية</div>
+        <div class="node" title="node">
+          <div class="dot"></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="links-grid" id="links" aria-live="polite">
+      <!-- Links will be rendered by JS to make trivial scraping harder -->
+    </section>
+
+    <footer>
+      <small>© 2025 جميع الحقوق محفوظة — تصميم عصري متوافق مع RTL</small>
+    </footer>
+  </main>
+
+  <script>
+    /* -----------------------------
+       Basic client-side protections
+       -----------------------------*/
+    (function(){
+      // Disable common copy / view-source shortcuts (deterrent only)
+      window.addEventListener('keydown', function(e){
+        if (e.ctrlKey && (e.key==='u' || e.key==='U' || e.key==='s' || e.key==='S' || e.key==='p' || e.key==='P')){ e.preventDefault(); }
+        // block devtools shortcuts
+        if (e.ctrlKey && e.shiftKey && (e.key==='I' || e.key==='i' || e.key==='C' || e.key==='c' || e.key==='J' || e.key==='j')){ e.preventDefault(); }
+        if (e.key==='F12') e.preventDefault();
+      }, true);
+
+      // Disable right-click & selection
+      document.addEventListener('contextmenu', e=>e.preventDefault());
+      document.addEventListener('selectstart', e=>e.preventDefault());
+      document.addEventListener('copy', e=>e.preventDefault());
+    })();
+
+    /* -----------------------------
+       Render links dynamically: encoded to deter naive scrapers
+       -----------------------------*/
+    (function(){
+      const encoded = [
+        // base64 of URL + label + iconClass
+        'aHR0cHM6Ly9pbnN0YWdyYW0uY29tL3pkNjx8SW5zdGFncmFt',
+        'aHR0cHM6Ly90Lm1lL0pKMUpJKHxUZWxlZ3JhbQ==',
+        'aHR0cHM6Ly93d3cuc25hcGNodGF0LmNvbS9hZGQvemQ2b2xkfFNuYXBjaGF0',
+        'https://ar.m.wikipedia.org/wiki/%D8%AC%D8%A7%D9%85%D8%B9%D8%A9_%D8%A7%D9%84%D8%B9%D9%84%D9%88%D9%85_%D9%88%D8%A7%D9%84%D8%AA%D9%83%D9%86%D9%88%D9%84%D9%88%D8%AC%D9%8A%D8%A7_%28%D8%A7%D9%84%D8%A3%D8%B1%D8%AF%D9%86%29fQ==',
+        'aHR0cDovL25vOC5yYWRpb2phci5jb20vZGt0Z2E3NHdkZDN2dyo='
+      ];
+
+      const meta = [
+        {label:'Instagram', icon:'fab fa-instagram'},
+        {label:'Telegram', icon:'fab fa-telegram'},
+        {label:'Snapchat', icon:'fab fa-snapchat'},
+        {label:'JUST', icon:'fas fa-university'},
+        {label:'إذاعة المسجد', icon:'fas fa-mosque'}
+      ];
+
+      // helper decode: supports plain strings or base64
+      function tryDecode(s){
+        try{
+          // detect base64-looking string
+          if (/^[A-Za-z0-9+/=]+$/.test(s)){
+            return atob(s);
+          }
+          return s;
+        }catch(e){return s}
+      }
+
+      const container = document.getElementById('links');
+
+      // render after a short random delay to make trivial scrapers miss initial HTML
+      setTimeout(()=>{
+        for(let i=0;i<meta.length;i++){
+          const url = tryDecode(encoded[i]||'') || '#';
+          const m = meta[i];
+
+          const a = document.createElement('a');
+          a.className='link-card';
+          a.href = url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+
+          a.innerHTML = `
+            <div class='link-left'>
+              <div class='icon-sq' aria-hidden='true'><i class='${m.icon}'></i></div>
+              <div>
+                <div class='link-title'>${m.label}</div>
+                <div class='link-desc'>زيارة واكتشاف</div>
+              </div>
+            </div>
+            <div aria-hidden='true'>›</div>
+          `;
+          container.appendChild(a);
+        }
+      }, 500 + Math.floor(Math.random()*900));
+
+    })();
+
+    /* -----------------------------
+       Simple developer-tools detection / deterrent
+       -----------------------------*/
+    (function(){
+      let lastWidth = window.outerWidth;
+      setInterval(()=>{
+        if (window.outerWidth - lastWidth > 160){
+          // likely devtools opened — gently redirect to a safe page or obfuscate content
+          try{ document.getElementById('links').innerHTML = ''; }
+          catch(e){}
+        }
+        lastWidth = window.outerWidth;
+      },1000);
+    })();
+
+    /* -----------------------------
+       Accessibility small improvements
+       -----------------------------*/
+    (function(){
+      // enable keyboard focus for link-cards
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Tab'){
+          document.querySelectorAll('.link-card').forEach(el=>el.setAttribute('tabindex','0'));
+        }
+      });
+    })();
+  </script>
+
+  <!-- lightweight icon source (fontawesome CDN) loaded asynchronously -->
+  <script>
+    (function(){
+      const s = document.createElement('link');
+      s.rel='stylesheet';
+      s.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css';
+      document.head.appendChild(s);
+    })();
+  </script>
+</body>
+</html>
